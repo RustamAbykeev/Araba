@@ -50,7 +50,10 @@ function createCardTemplate(carData = {}) {
     <div class="card-body">
         <h2>${carData.make} ${carData.model} ${carData.engine_volume}L (${carData.year})</h2>
         <h3>${carData.price}$</h3>
+        <p>VIN:${carData.vin}</p>
+        <p>VIN проверен: ${carData.vin_check ? "Да" : "Нет"}</p>
         <a href="tel:${carData.phone}" class="card-btn">${carData.seller}</a>
+        
     </div>
 </div>`
 }
