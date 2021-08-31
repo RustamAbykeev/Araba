@@ -1,6 +1,8 @@
-const CARS = JSON.parse(DATA)
+let CARS = JSON.parse(DATA)
 // console.log(CARS);
 const showcaseEl = document.getElementById('showcase')
+const sortSelectEl = document.getElementById('sortSelect')
+const searchFormEl = document.getElementById('searchForm')
 // console.dir(showcaseEl);
 renderCards(showcaseEl, CARS)
 // {
@@ -32,6 +34,34 @@ renderCards(showcaseEl, CARS)
 
 
 
+searchFormEl.addEventListener('submit', e => {
+    e.preventDefault()
+    const query = e.target.search.value.trim().toLowerCase().split(' ').filter(Boolean)
+    console.log(query);
+    const searchFields = ['make', 'model', 'year']
+    CARS = JSON.parse(DATA).filter(car => { 
+        return query.every(word => {
+            return searchFields.some(field => {
+                return String(car[field]).toLowerCase().includes(word)
+            })
+        })
+    })
+    console.table(CARS);
+    renderCards(showcaseEl, CARS)
+})
+
+sortSelectEl.addEventListener('change', e => {
+    console.log(e.target.value);
+    const [key, order] = e.target.value.split('/')
+    CARS.sort((car1, car2) => {
+        return String(car1[key]).localeCompare(String(car2[key]), undefined, { numeric: true }) * order
+    })
+    renderCards(showcaseEl, CARS)
+})
+
+// document.addEventListener('click', e => {
+//     console.log(e);
+// })
 
 function renderCards(showcaseEl = document, carsArray = []) {
     showcaseEl.innerHTML = createCardTemplateList(carsArray).join('')
@@ -50,10 +80,64 @@ function createCardTemplate(carData = {}) {
     <div class="card-body">
         <h2>${carData.make} ${carData.model} ${carData.engine_volume}L (${carData.year})</h2>
         <h3>${carData.price}$</h3>
-        <p>VIN:${carData.vin}</p>
-        <p>VIN проверен: ${carData.vin_check ? "Да" : "Нет"}</p>
+        <h4 class="card-rating">${createStarsRating(carData.rating)} ${carData.rating}</h4>
+        ${carData.vin ? `<p>VIN:${carData.vin}</p>` : ''}
+        ${carData.vin ? `<p>VIN проверен: ${carData.vin_check ? "Да" : "Нет"}</p>` : ''}
         <a href="tel:${carData.phone}" class="card-btn">${carData.seller}</a>
-        
     </div>
 </div>`
 }
+
+function createStarsRating(rating) {
+    let stars = ''
+    for (let i = 0; i < 5; i++) {
+        if (i + 0.5 < rating) {
+            stars += '<i class="fas fa-star"></i>'
+        } else if (i < rating) {
+            stars += '<i class="fas fa-star-half-alt"></i>'
+        } else {
+            stars += '<i class="far fa-star"></i>'
+        }
+    }
+    return stars
+}
+
+
+
+// const arr = [{ a: 1, b: 2, c: 3 }, { a: 3, b: 2, c: 2 }, { a: 2, b: 1, c: 1 }, { a: 1, b: 1, c: 3 }, { a: 3, b: 1, c: 2 }, { a: 2, b: 1, c: 1 }]
+
+// console.table([...arr]);
+
+// arr.sort((obj1, obj2) => obj1.a - obj2.a || obj1.b - obj2.b)
+
+// console.table([...arr]);
+
+
+// document.addEventListener('click', () => {
+//     console.log('Click on document!');
+// })
+
+// testBtn.addEventListener('click', () => {
+//     console.log('Click on button!');
+// })
+
+// const buttons = document.querySelectorAll('.test-btn')
+// console.log(buttons);
+// buttons.forEach((button) => {
+//     button.addEventListener('click', () => {
+//         console.log('click on btn!');
+//     })
+// })
+document.addEventListener('click', (event) => {
+    const btn = event.target.closest('.test-btn')
+    if (btn) {
+        console.log('click on btn');
+    }
+})
+
+
+
+// const nums = [1,5,12,15,2,15,23,65,4]
+
+// const nums10 = nums.filter(num => num > 10)
+// console.log(nums10);
