@@ -92,11 +92,11 @@ function createStarsRating(rating) {
     let stars = ''
     for (let i = 0; i < 5; i++) {
         if (i + 0.5 < rating) {
-            stars += '<i class="fas fa-star"></i>'
+            stars += '<i class="fas fa-star star"></i>'
         } else if (i < rating) {
-            stars += '<i class="fas fa-star-half-alt"></i>'
+            stars += '<i class="fas fa-star-half-alt star"></i>'
         } else {
-            stars += '<i class="far fa-star"></i>'
+            stars += '<i class="far fa-star star"></i>'
         }
     }
     return stars
