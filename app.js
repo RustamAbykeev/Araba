@@ -4,7 +4,15 @@ const showcaseEl = document.getElementById('showcase')
 const sortSelectEl = document.getElementById('sortSelect')
 const searchFormEl = document.getElementById('searchForm')
 // console.dir(showcaseEl);
+if (!localStorage.getItem('wishCars')) {
+    localStorage.setItem('wishCars', JSON.stringify([]));
+}
+
+const wishCars = JSON.parse(localStorage.getItem('wishCars'));
+
 renderCards(showcaseEl, CARS)
+
+
 // {
 //     "id": "89aed5b8c686ebd713a62873e4cd756abab7a106",
 //     "make": "BMW",
@@ -31,6 +39,28 @@ renderCards(showcaseEl, CARS)
 //       "mixed": 8.4
 //     }
 //   },
+
+showcaseEl.addEventListener('click', e => {
+    const btn = e.target.closest('.wish-btn')
+    if (btn) {
+        const id = btn.closest('.card').dataset.id
+        // console.log(btn.closest('.card').dataset)
+        // console.log(id);
+        const wishCarIdx = wishCars.findIndex(wishCarId => wishCarId === id);
+        console.log(wishCarIdx);
+        const icon = btn.firstElementChild;
+        if (wishCarIdx === -1) {
+            wishCars.push(id);
+            icon.classList.remove('far')
+            icon.classList.add('fas')
+        } else {
+            wishCars.splice(wishCarIdx, 1);
+            icon.classList.remove('fas')
+            icon.classList.add('far')
+        }
+        localStorage.setItem('wishCars', JSON.stringify(wishCars))
+    }
+})
 
 
 
@@ -72,7 +102,7 @@ function createCardTemplateList(carsArray = []) {
 }
 
 function createCardTemplate(carData = {}) {
-    return `<div class="card box">
+    return `<div class="card box" data-id=${carData.id}>
     <div class="card-img-wrap">
                ${carData.top ? ` <span class="card-badge top">TOP!</span>` : ''}
                 <img class="card-img" src="${carData.img}" alt="${carData.make} ${carData.model}" width="1" height="1" loading="lazy" decoding="async">
@@ -80,12 +110,15 @@ function createCardTemplate(carData = {}) {
     <div class="card-body">
         <h2>${carData.make} ${carData.model} ${carData.engine_volume}L (${carData.year})</h2>
         <h3>${carData.price}$</h3>
-        <h4 class="card-rating">${createStarsRating(carData.rating)} ${carData.rating}</h4>
+        <h4 class="card-rating">${createStarsRating(carData.rating)} ${carData.rating}</h4>  
         ${carData.vin ? `<p>VIN:${carData.vin}</p>` : ''}
         ${carData.vin ? `<p>VIN проверен: ${carData.vin_check ? "Да" : "Нет"}</p>` : ''}
         <a href="tel:${carData.phone}" class="card-btn">${carData.seller}</a>
+        <button class="card-btn wish-btn">
+             <i class="${wishCars.includes(carData.id) ? 'fas' : 'far'} fa-star"></i>
+        </button>
     </div>
-</div>`
+</div>` 
 }
 
 function createStarsRating(rating) {
